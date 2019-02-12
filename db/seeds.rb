@@ -1,7 +1,9 @@
-// 20190212115350
-// https://api.the-odds-api.com/v3/odds?sport=icehockey_nhl&region=uk&mkt=h2h&apiKey=57c0bfae95b7cb8dc7b24729437c70f3
+# // 20190212115350
+# // https://api.the-odds-api.com/v3/odds?sport=icehockey_nhl&region=uk&mkt=h2h&apiKey=57c0bfae95b7cb8dc7b24729437c70f3
 
-{
+require "pry"
+
+NHL_data = {
   "success": true,
   "data": [
     {
@@ -1849,3 +1851,15 @@
     }
   ]
 }
+
+
+NHL_data[:data].each do |game_data|
+  # binding.pry
+  new_game = Game.find_or_create_by(game_teams: game_data[:teams], sport_key: "icehockey_nhl", game_date:nil)
+  game_data[:sites].each do |site|
+   new_website = Website.find_or_create_by(name: site[:site_nice])
+
+   BettingOdd.find_or_create_by(website_id: new_website.id , game_id: new_game.id, odds: site[:odds][:h2h][0..1])
+  end
+
+end
