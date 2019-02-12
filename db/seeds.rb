@@ -1854,8 +1854,9 @@ NHL_data = {
 
 
 NHL_data[:data].each do |game_data|
-  # binding.pry
-  new_game = Game.find_or_create_by(game_teams: game_data[:teams], sport_key: "icehockey_nhl", game_date:nil)
+  game_teams = game_data[:teams]
+  # team1 = Team.find_or_create_by(name: game_teams[0])
+  new_game = Game.find_or_create_by(team1: game_teams[0], team2: game_teams[1], sport_key: "icehockey_nhl", game_date:nil)
   game_data[:sites].each do |site|
    new_website = Website.find_or_create_by(name: site[:site_nice])
 

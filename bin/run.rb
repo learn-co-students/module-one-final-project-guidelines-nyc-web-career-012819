@@ -1,6 +1,22 @@
 require_relative '../config/environment'
-require_relative '../lib/api_communicator.rb'
-require_relative '../lib/command_line_interface.rb'
+require "pry"
 
 welcome
-user_input
+your_team = team_include?
+get_websites_and_odds_of_the_game(your_team)
+# def get_all_team_names
+#   all_teams = []
+#   NHL_data[:data].each do |game_data|
+#     game_teams = game_data[:teams]
+#     all_teams << game_teams[0]
+#     all_teams << game_teams[1]
+#   end
+#   all_teams
+# end
+
+# team_include?
+
+
+
+#
+# binding.pry
