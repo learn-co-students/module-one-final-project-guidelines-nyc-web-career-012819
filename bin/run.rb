@@ -16,4 +16,21 @@ results["results"].each do |key|
   hero_name = key["name"]
   puts "Hero: #{hero_name}"
   Hero.find_or_create_by(name: hero_name)
+  key["biography"].map do |biograph, value|
+    if biograph == "full-name"
+      puts "#{biograph}: #{value}"
+      # secret_id = value
+      Hero.find_or_create_by(full_name: value)
+    end
+  #   puts "#{biograph}: #{value}"
+  end
+  key["powerstats"].select do |powerstat, value|
+    if powerstat == "intelligence"
+      puts "#{powerstat}: #{value}"
+    end
+    # binding.pry
+  end
+
+    # puts #{powerstat}: #{value}"
+    # Hero.find_or_create_by()
 end
