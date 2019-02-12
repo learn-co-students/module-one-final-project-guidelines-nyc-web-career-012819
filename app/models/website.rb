@@ -7,9 +7,15 @@ class Website < ActiveRecord::Base
     name
   end
 
-  def self.all_websites
-    self.all.map do |game|
-      game.websites
+  def self.all_websites_ids
+    self.all.map do |site|
+      site.id
+    end.flatten.uniq
+  end
+
+  def self.all_websites_names
+    self.all.map do |site|
+      site.name
     end.flatten.uniq
   end
 

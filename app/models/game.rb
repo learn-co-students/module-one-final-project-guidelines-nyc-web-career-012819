@@ -12,4 +12,7 @@ class Game < ActiveRecord::Base
       game.teams
     end.flatten.uniq
   end
+
+  
+
 end
