@@ -95,21 +95,20 @@ def search_hero
     results.each_with_index do |hero, index|
       puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
     end
-    i = gets.chomp
+    i = gets.to_i-1
     hero_hash = results[i]
-    hero_hash.each do |hero|
-      hero_name = hero["name"]
-      hero_full_name = hero["biography"]["full-name"]
-      hero_gender = hero["appearance"]["gender"][0]
-      hero_height = hero["appearance"]["height"][0]
-      hero_weight = hero["appearance"]["weight"][0]
-      hero_birth_place = hero["biography"]["place-of-birth"]
-      hero_occupation = hero["work"]["occupation"]
-      hero_powerstats_int = hero["powerstats"]["intelligence"]
-      hero_powerstats_str = hero["powerstats"]["strength"]
-      hero_powerstats_speed = hero["powerstats"]["speed"]
-      hero_powerstats_power = hero["powerstats"]["power"]
-      hero_powerstats_combat = hero["powerstats"]["combat"]
+      hero_name = hero_hash["name"]
+      hero_full_name = hero_hash["biography"]["full-name"]
+      hero_gender = hero_hash["appearance"]["gender"][0]
+      hero_height = hero_hash["appearance"]["height"][0]
+      hero_weight = hero_hash["appearance"]["weight"][0]
+      hero_birth_place = hero_hash["biography"]["place-of-birth"]
+      hero_occupation = hero_hash["work"]["occupation"]
+      hero_powerstats_int = hero_hash["powerstats"]["intelligence"]
+      hero_powerstats_str = hero_hash["powerstats"]["strength"]
+      hero_powerstats_speed = hero_hash["powerstats"]["speed"]
+      hero_powerstats_power = hero_hash["powerstats"]["power"]
+      hero_powerstats_combat = hero_hash["powerstats"]["combat"]
       puts "Hero: #{hero_name}"
       puts "Full Name: #{hero_full_name}"
       puts "Gender: #{hero_gender}"
@@ -123,7 +122,6 @@ def search_hero
       puts "Power: #{hero_powerstats_power}"
       puts "Combat: #{hero_powerstats_combat}"
       puts " "
-    end
       Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
   else
     results.each do |hero|
