@@ -7,3 +7,4 @@ gem 'coderay'
 gem "pry"
 gem "require_all"
 gem "rest-client"
+gem "table_print"

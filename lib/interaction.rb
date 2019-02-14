@@ -66,6 +66,7 @@ def user_menu
     user_menu
   when "compare", "3"
     compare_hero
+    user_option_menu
     user_menu
   when "exit", "4"
     abort("Thank you.")
@@ -192,38 +193,15 @@ end
 
 def compare_hero
   puts "What is the name of the first character you want to compare?"
-  first = gets.chomp
+  first = gets.chomp.downcase
   puts "what is the name of the second character to compare?"
-  second = gets.chomp
+  second = gets.chomp.downcase
 
-  fhero = Hero.find_by('lower(name) = ?', first.downcase)
-  shero = Hero.find_by('lower(name) = ?', second.downcase)
-  binding.pry
-
-  puts "\tName:                 #{fhero["name"]}                 #{shero["name"]}"
-  puts "\tFull Name:            #{fhero["full_name"]}            #{shero["full_name"]}"
-  puts "\tGender:                #{fhero["gender"]}                     #{shero["gender"]}"
-  puts "\tHeight:                #{fhero["height"]}                     #{shero["height"]}"
-  puts "\tWeight:                #{fhero["weight"]}                     #{shero["weight"]}"
-  puts "\tIntelligence:          #{fhero["int"]}                        #{shero["int"]}"
-  puts "\tStrength:              #{fhero["str"]}                       #{shero["str"]}"
-  puts "\tSpeed:                 #{fhero["speed"]}                     #{shero["speed"]}"
-  puts "\tPower:                 #{fhero["power"]}                     #{shero["power"]}"
-  puts "\tCombat:                #{fhero["combat"]}                    #{shero["combat"]}"
+  hero = []
+  hero << Hero.find_by('lower(name) = ?', first)
+  hero << Hero.find_by('lower(name) = ?', second)
+  tp hero
 end
-
-# hero_full_name = hero["biography"]["full-name"]
-# hero_gender = hero["appearance"]["gender"][0]
-# hero_height = hero["appearance"]["height"][0]
-# hero_weight = hero["appearance"]["weight"][0]
-# hero_birth_place = hero["biography"]["place-of-birth"]
-# hero_occupation = hero["work"]["occupation"]
-# hero_powerstats_int = hero["powerstats"]["intelligence"]
-# hero_powerstats_str = hero["powerstats"]["strength"]
-# hero_powerstats_speed = hero["powerstats"]["speed"]
-# hero_powerstats_power = hero["powerstats"]["power"]
-# hero_powerstats_combat = hero["powerstats"]["combat"]
-
 
 def after_hero_search
   after_hero_menu
