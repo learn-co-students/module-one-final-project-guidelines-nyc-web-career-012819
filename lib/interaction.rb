@@ -1,7 +1,9 @@
+require_relative '../app/models/hero.rb'
+
 def main_menu
   puts " "
   puts "Enter Your Command"
-  user_command = gets.chomp
+  user_command = gets.chomp.downcase
 
   case user_command
   when "login", '1'
@@ -83,125 +85,39 @@ end
 
 def search_hero
   puts "Enter the Name of the Hero you would like to search."
-  search_term = gets.chomp
-  url_safe_search_term = search_term.split(' ').join('%20')
-  url = "https://superheroapi.com/api.php/10156490789022732/search/#{url_safe_search_term}"
-
-  response = RestClient.get(url)
-  results = JSON.parse(response.body)["results"]
-
-  if results == nil
-    puts "Hero not found, try again."
-    search_hero
-  elsif results.length > 1
-    results.each_with_index do |hero, index|
-      puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
-    end
-    i = gets.to_i-1
-    hero_hash = results[i]
-      hero_name = hero_hash["name"]
-      hero_full_name = hero_hash["biography"]["full-name"]
-      hero_gender = hero_hash["appearance"]["gender"][0]
-      hero_height = hero_hash["appearance"]["height"][0]
-      hero_weight = hero_hash["appearance"]["weight"][0]
-      hero_birth_place = hero_hash["biography"]["place-of-birth"]
-      hero_occupation = hero_hash["work"]["occupation"]
-      hero_powerstats_int = hero_hash["powerstats"]["intelligence"]
-      hero_powerstats_str = hero_hash["powerstats"]["strength"]
-      hero_powerstats_speed = hero_hash["powerstats"]["speed"]
-      hero_powerstats_power = hero_hash["powerstats"]["power"]
-      hero_powerstats_combat = hero_hash["powerstats"]["combat"]
-      puts "Hero: #{hero_name}"
-      puts "Full Name: #{hero_full_name}"
-      puts "Gender: #{hero_gender}"
-      puts "Height: #{hero_height}"
-      puts "Weight: #{hero_weight}"
-      puts "Birth Place: #{hero_birth_place}"
-      puts "Occupation(s): #{hero_occupation}"
-      puts "Intelligence: #{hero_powerstats_int}"
-      puts "Strength: #{hero_powerstats_str}"
-      puts "Speed: #{hero_powerstats_speed}"
-      puts "Power: #{hero_powerstats_power}"
-      puts "Combat: #{hero_powerstats_combat}"
-      puts " "
-      Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
-      Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
-      puts "Would you like to add this Hero to your Favorites?"
-      puts "Type Yes to add #{hero_name} to your Favorites."
-      puts "Type No to return to the user menu."
-      puts " "
-      input = gets.chomp.downcase
-      case input
-      when "y", "yes"
-        id_user = User.where(name: @logged_in_user["name"]).pluck(:id)
-        id_hero = Hero.where(name: hero_name).pluck(:id)
-        Favorite.create(user_id: id_user[0], hero_id: id_hero[0])
-        puts "Hero added to your favorites!"
+  search_term = gets.chomp.downcase
+  create_hero(search_term)
+    puts "Would you like to add to your Favorites?"
+    puts "Type Yes to add to your Favorites."
+    puts "Type No to return to the user menu."
+    puts " "
+    input = gets.chomp.downcase
+    case input
+    when "y", "yes"
+      id_user = User.where(name: @logged_in_user["name"]).pluck(:id)
+      id_hero = Hero.where('lower(name) = ?', search_term).pluck(:id)
+      Favorite.create(user_id: id_user[0], hero_id: id_hero[0])
+      puts "#{search_term} added to your favorites!"
       when "n", "no"
         after_hero_search
       else
         "Invalid response, try Yes or No."
       end
-  else
-    results.each do |hero|
-      hero_name = hero["name"]
-      hero_full_name = hero["biography"]["full-name"]
-      hero_gender = hero["appearance"]["gender"][0]
-      hero_height = hero["appearance"]["height"][0]
-      hero_weight = hero["appearance"]["weight"][0]
-      hero_birth_place = hero["biography"]["place-of-birth"]
-      hero_occupation = hero["work"]["occupation"]
-      hero_powerstats_int = hero["powerstats"]["intelligence"]
-      hero_powerstats_str = hero["powerstats"]["strength"]
-      hero_powerstats_speed = hero["powerstats"]["speed"]
-      hero_powerstats_power = hero["powerstats"]["power"]
-      hero_powerstats_combat = hero["powerstats"]["combat"]
-      puts "Hero: #{hero_name}"
-      puts "Full Name: #{hero_full_name}"
-      puts "Gender: #{hero_gender}"
-      puts "Height: #{hero_height}"
-      puts "Weight: #{hero_weight}"
-      puts "Birth Place: #{hero_birth_place}"
-      puts "Occupation(s): #{hero_occupation}"
-      puts "Intelligence: #{hero_powerstats_int}"
-      puts "Strength: #{hero_powerstats_str}"
-      puts "Speed: #{hero_powerstats_speed}"
-      puts "Power: #{hero_powerstats_power}"
-      puts "Combat: #{hero_powerstats_combat}"
-      puts " "
-      Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
-      puts "Would you like to add this Hero to your Favorites?"
-      puts "Type Yes to add #{hero_name} to your Favorites."
-      puts "Type No to return to the user menu."
-      puts " "
-      input = gets.chomp.downcase
-      case input
-      when "y", "yes"
-        id_user = User.where(name: @logged_in_user["name"]).pluck(:id)
-        id_hero = Hero.where(name: hero_name).pluck(:id)
-        Favorite.create(user_id: id_user[0], hero_id: id_hero[0])
-        puts "Hero added to your favorites!"
-      when "n", "no"
-        after_hero_search
-      else
-        "Invalid response, try Yes or No."
-      end
+      after_hero_search
     end
-  end
-    after_hero_search
-end
 
 def compare_hero
+  hero_array = []
   puts "What is the name of the first character you want to compare?"
-  first = gets.chomp.downcase
-  puts "what is the name of the second character to compare?"
-  second = gets.chomp.downcase
+  hero_name = gets.chomp.downcase
+  find_by_name(hero_name)
 
-  hero = []
-  hero << Hero.find_by('lower(name) = ?', first)
-  hero << Hero.find_by('lower(name) = ?', second)
-  tp hero
+
+  puts "What is the name of the second character to compare?"
+  second = gets.chomp.downcase
+  tp hero_array, :name, :full_name, :gender, :height, :weight, :int, :str, :speed, :power, :combat
 end
+
 
 def after_hero_search
   after_hero_menu
