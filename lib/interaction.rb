@@ -29,7 +29,7 @@ def login_process
     login_process
   else
     user_option_menu
-    user_menu
+    after_user_created(login_name)
   end
 end
 
@@ -43,7 +43,7 @@ def create_account
     puts " "
     puts "User Created!!"
     user_option_menu
-    after_user_created
+    after_user_created(user_name)
   else
     puts "Username taken, please enter another name."
     puts " "
@@ -123,6 +123,20 @@ def search_hero
       puts "Combat: #{hero_powerstats_combat}"
       puts " "
       Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
+      Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
+      puts "Would you like to add this Hero to your Favorites?"
+      input = gets.chomp.downcase
+      case input
+      when "y", "yes"
+        id_user = User.where(name: @logged_in_user["name"]).pluck(:id)
+        id_hero = Hero.where(name: hero_name).pluck(:id)
+        Favorite.create(user_id: id_user[0], hero_id: id_hero[0])
+        puts "Hero added to your favorites!"
+      when "n", "no"
+        after_hero_search
+      else
+        "Invalid response, try Yes or No."
+      end
   else
     results.each do |hero|
       hero_name = hero["name"]
@@ -151,28 +165,34 @@ def search_hero
       puts "Combat: #{hero_powerstats_combat}"
       puts " "
       Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
+      puts "Would you like to add this Hero to your Favorites?"
+      input = gets.chomp.downcase
+      case input
+      when "y", "yes"
+        id_user = User.where(name: @logged_in_user["name"]).pluck(:id)
+        id_hero = Hero.where(name: hero_name).pluck(:id)
+        Favorite.create(user_id: id_user[0], hero_id: id_hero[0])
+        puts "Hero added to your favorites!"
+      when "n", "no"
+        after_hero_search
+      else
+        "Invalid response, try Yes or No."
+      end
     end
   end
     after_hero_search
 end
 
 def after_hero_search
-  puts "------------------------------------------------------------------"
-  puts "1. Search                               to search for another hero"
-  puts "2. Add                                  to your favorite heroes list"
-  puts "3. Return                               to the user menu"
-  puts "4. Exit                                 exit the application"
-  puts "------------------------------------------------------------------"
+  after_hero_menu
   user_command = gets.downcase.chomp
   case user_command
   when "search", "1"
     search_hero
-  when "add", "2"
-    puts "Hero added to your favorites!"
-  when "return", "3"
+  when "return", "2"
     user_option_menu
     user_menu
-  when "exit", "4"
+  when "exit", "3"
     abort("Thank you.")
   else
     "Invalid response, try again"

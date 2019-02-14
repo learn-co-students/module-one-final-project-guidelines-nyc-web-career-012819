@@ -9,4 +9,8 @@ class User < ActiveRecord::Base
   def self.find_user(login_name)
     self.find_by(name: login_name)
   end
+
+  def add_hero_to_list(hero_name)
+    self.heros << Hero.find_by(hero_name)
+  end
 end

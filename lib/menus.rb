@@ -15,3 +15,11 @@ def user_option_menu
   puts "4. Exit                                 exit the application"
   puts "------------------------------------------------------------------"
 end
+
+def after_hero_menu
+  puts "------------------------------------------------------------------"
+  puts "1. Search                               to search for another hero"
+  puts "2. Return                               to the user menu"
+  puts "3. Exit                                 exit the application"
+  puts "------------------------------------------------------------------"
+end
