@@ -2,24 +2,6 @@ class Hero < ActiveRecord::Base
   has_many :favorites
   has_many :users, through: :favorites
 
-  # def self.create_hero(search_term)
-
-  #   results = Hero.api_request(search_term)
-  #   if results == nil
-  #     puts "Hero not found, try again."
-  #     return nil
-  #   elsif results.length > 1
-  #     results.each_with_index do |hero, index|
-  #       puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
-  #     end
-  #     i = gets.to_i-1
-  #     hero = results[i]
-  #     Hero.get_make_hero(hero)
-  #   else
-  #     Hero.get_make_hero(results.first)
-  #   end
-  # end
-
   def self.find_or_create_hero(hero_name)
     # search db
     if hero = Hero.find_by('lower(name) = :name', name: hero_name)
@@ -81,23 +63,26 @@ class Hero < ActiveRecord::Base
 
   private
   def self.api_request(search_term)
-    url_safe_search_term = search_term.split(' ').join('%20')
-    url = "https://superheroapi.com/api.php/10156490789022732/search/#{url_safe_search_term}"
+    if search_term.match(/^[[:alpha:][:blank:]]+$/)
+      url_safe_search_term = search_term.split(' ').join('%20')
+      url = "https://superheroapi.com/api.php/10156490789022732/search/#{url_safe_search_term}"
 
-    response = RestClient.get(url)
-    results = JSON.parse(response.body)["results"]
+      response = RestClient.get(url)
+      results = JSON.parse(response.body)["results"]
+      if results && results.length > 1
+        results.each_with_index do |hero, index|
+          puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
+        end
+        i = gets.to_i-1
+        results[i]
 
-    if results.length > 1
-      results.each_with_index do |hero, index|
-        puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
+      elsif results && results.length == 1
+        results[0] #single result
+      else
+        return nil #error path
       end
-      i = gets.to_i-1
-      results[i]
-
-    elsif results.length == 1
-      results[0] #single result
-    else
-      return nil #error path
     end
+  else
+    return nil
   end
 end
