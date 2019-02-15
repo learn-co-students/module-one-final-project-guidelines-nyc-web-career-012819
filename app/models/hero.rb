@@ -82,7 +82,5 @@ class Hero < ActiveRecord::Base
         return nil #error path
       end
     end
-  else
-    return nil
   end
 end
