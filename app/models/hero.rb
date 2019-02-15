@@ -2,31 +2,37 @@ class Hero < ActiveRecord::Base
   has_many :favorites
   has_many :users, through: :favorites
 
-  def create_hero(search_term)
-    url_safe_search_term = search_term.split(' ').join('%20')
-    url = "https://superheroapi.com/api.php/10156490789022732/search/#{url_safe_search_term}"
+  # def self.create_hero(search_term)
 
-    response = RestClient.get(url)
-    results = JSON.parse(response.body)["results"]
+  #   results = Hero.api_request(search_term)
+  #   if results == nil
+  #     puts "Hero not found, try again."
+  #     return nil
+  #   elsif results.length > 1
+  #     results.each_with_index do |hero, index|
+  #       puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
+  #     end
+  #     i = gets.to_i-1
+  #     hero = results[i]
+  #     Hero.get_make_hero(hero)
+  #   else
+  #     Hero.get_make_hero(results.first)
+  #   end
+  # end
 
-    if results == nil
-      puts "Hero not found, try again."
-      search_hero
-    elsif results.length > 1
-      results.each_with_index do |hero, index|
-        puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
-      end
-      i = gets.to_i-1
-      hero = results[i]
-      get_make_hero(hero)
+  def self.find_or_create_hero(hero_name)
+    # search db
+    if hero = Hero.find_by('lower(name) = :name', name: hero_name)
+      tp hero, :name, :full_name, :gender, :height, :weight, :int, :str, :speed, :power, :combat
+      hero # hero in database
+    elsif !hero && api_response = Hero.api_request(hero_name)
+      Hero.get_make_hero(api_response) # hero not in database but found in api
     else
-      results.each do |hero|
-        get_make_hero(hero)
-      end
+      puts "No hero found, check spelling." # no hero was found
     end
   end
 
-  def get_make_hero(hero)
+  def self.get_make_hero(hero)
     hero_name = hero["name"]
     hero_full_name = hero["biography"]["full-name"]
     hero_gender = hero["appearance"]["gender"][0]
@@ -40,20 +46,58 @@ class Hero < ActiveRecord::Base
     hero_powerstats_power = hero["powerstats"]["power"]
     hero_powerstats_combat = hero["powerstats"]["combat"]
     puts " "
-    hero = Hero.find_or_create_by(name: hero_name, full_name: hero_full_name, gender: hero_gender, height: hero_height, weight: hero_weight, birth_place: hero_birth_place, occupation: hero_occupation, int: hero_powerstats_int, str: hero_powerstats_str, speed: hero_powerstats_speed, power: hero_powerstats_power, combat: hero_powerstats_combat)
-    tp hero
+    hero = Hero.find_or_create_by(
+      name: hero_name,
+      full_name: hero_full_name,
+      gender: hero_gender,
+      height: hero_height,
+      weight: hero_weight,
+      birth_place: hero_birth_place,
+      occupation: hero_occupation,
+      int: hero_powerstats_int,
+      str: hero_powerstats_str,
+      speed: hero_powerstats_speed,
+      power: hero_powerstats_power,
+      combat: hero_powerstats_combat
+    )
+    tp hero, :name, :full_name, :gender, :height, :weight, :int, :str, :speed, :power, :combat
     puts " "
+    return hero
   end
 
-  def find_by_name(hero_name)
-    hero = Hero.find_by('lower(name) = :name', name: hero_name)
-    binding.pry
-    hero ? hero : nil
-    #   hero = hero_array << Hero.find_by('lower(name) = ?', hero_name)
-    # elsif
-    #   search_term = first
-    #   create_hero(search_term)
-    #   hero_array << Hero.find_by('lower(name) = ?', first)
-    # end
+  # def self.find_by_name(hero_name)
+  #   if hero = Hero.find_by('lower(name) = :name', name: hero_name)
+  #     hero
+  #   elsif !hero && api_response = Hero.api_request(hero_name)
+  #     Hero.get_make_hero(api_response[0])
+  #   else
+  #     puts "Hero not found, check your spelling."
+  #   end
+  #   #check database first
+  #   #check API next
+  #   #if not in api or database, hero not found
+  # end
+
+
+  private
+  def self.api_request(search_term)
+    url_safe_search_term = search_term.split(' ').join('%20')
+    url = "https://superheroapi.com/api.php/10156490789022732/search/#{url_safe_search_term}"
+
+    response = RestClient.get(url)
+    results = JSON.parse(response.body)["results"]
+
+    if results.length > 1
+      results.each_with_index do |hero, index|
+        puts "\t#{index+1}. #{hero["biography"]["full-name"]}"
+      end
+      i = gets.to_i-1
+      results[i]
+
+    elsif results.length == 1
+      results[0] #single result
+    else
+      return nil #error path
+    end
   end
 end
