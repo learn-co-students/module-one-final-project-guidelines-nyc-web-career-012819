@@ -148,8 +148,9 @@ class CommandLineInterface
     puts "Return to main menu? (y/n)"
     answer = gets.chomp
     if answer == "yes" || answer == "y"
-      binding.pry
-      self.existing_user_menu(@user)
+      return_to_menu
+      # binding.pry
+      # self.existing_user_menu(@user) #needs to go back to the main menu fresh start existing_user_menu
     elsif answer == "no" || answer == "n"
       exit_app
     else
@@ -158,7 +159,9 @@ class CommandLineInterface
 
   end
 
-
+  def return_to_menu
+    existing_user_menu(@user.name)
+  end
 
   def exit_app
     puts "Byeeee"
@@ -167,7 +170,7 @@ class CommandLineInterface
 
   def error_message
     puts "Invalid Entry, Please Try Again!"
-    self.existing_user_menu(@user)
+    self.existing_user_menu(@user.name)
   end
 
 end
