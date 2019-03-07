@@ -16,10 +16,12 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     arel (7.1.4)
     coderay (1.1.1)
+    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.1)
+    figlet (1.1.0)
     http (4.0.5)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -32,6 +34,7 @@ GEM
     i18n (0.8.1)
     method_source (0.8.2)
     minitest (5.10.1)
+    paint (2.1.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -58,18 +61,25 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
+    unicode-display_width (1.5.0)
+    whirly (0.2.6)
+      unicode-display_width (~> 1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  colorize
   dotenv
+  figlet (~> 1.1)
   http
+  paint
   pry
   rake
   require_all
   sinatra-activerecord
   sqlite3
+  whirly
 
 BUNDLED WITH
    1.17.2
